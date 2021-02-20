@@ -1,0 +1,40 @@
+@import controllers.Post
+@import java.time.format.DateTimeFormatter
+
+@(posts: Seq[Post], form: Form[PostRequest])(implicit messages: Messages)
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>Scala Text Textboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/textboard.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>@Messages("textboard.title")</h1>
+      @for(error <- form.errors){
+        <p class="text-danger" id="error">@Messages(error.message)</p>
+      }
+      <form method="POST" action="/" class="form-inline">
+        <input type="text" class="form-control" id="post" name="post">
+        <button type="submit" class="btn btn-default">@Messages("textboard.send")</button>
+      </form>
+      <table class="table">
+        <thead>
+          <tr><th>@Messages("textboard.dateTime")</th><th>@Messages("textboard.message")</th></tr>
+        </thead>
+        <tbody>
+          @for(post <- posts.reverse){
+            <tr>
+              <td class="post-date">@{
+                val formatter = DateTimeFormatter.ofPattern(Messages("textboard.dateFormat"), messages.lang.toLocale)
+                post.date.format(formatter)
+              }</td>
+              <td class="post-body">@post.body</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

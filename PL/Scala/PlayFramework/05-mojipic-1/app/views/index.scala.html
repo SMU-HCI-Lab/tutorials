@@ -1,0 +1,51 @@
+@()
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+        <title>MOJIPIC</title>
+@*        <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/index.css")">*@
+    </head>
+    <body>
+        <div id="container">
+            <div id="header">
+@*                <a href="/" ><img border="0" src="@routes.Assets.at("images/MOJIPIC-logo.png")" title="MOJIPIC" alt="MOJIPIC"></a>*@
+            </div>
+            <div id="navigation">
+                <ul>
+                    <li>
+                    XXX
+                    </li>
+                </ul>
+            </div>
+            <div id="content">
+                <h2>
+                    画像をドラッグ＆ドロップ
+                </h2>
+                <div id="filedropzone-wrapper">
+                    <form  action="/pictures" class="dropzone" id="filedropzone">
+                        <input type="hidden" id="overlaytext" name="overlaytext">
+                        <input type="hidden" id="overlaytextsize" name="overlaytextsize">
+                    </form>
+                </div>
+                <div id="orverlaysettings">
+                    テロップ: <input type="text" id="overlaytext-shown" name="overlaytext-shown" size="40" maxlength="20" value="LGTM">
+                    文字サイズ: <input type="text" id="overlaytextsize-shown" name="overlaytextsize-shown" size="5" maxlength="5" value="60">
+                </div>
+                <p>
+            <h2>
+                画像一覧
+            </h2>
+                <div id="picture-grid">
+                    <ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+@*    <script src="@routes.Assets.at("javascripts/dropzone.js")"></script>*@
+@*    <script src="@routes.Assets.at("javascripts/mojipic.js")"></script>*@
+    <script>
+    var Mojipic = {};
+    </script>
+</html>

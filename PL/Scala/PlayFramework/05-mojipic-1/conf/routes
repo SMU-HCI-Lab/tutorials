@@ -1,0 +1,5 @@
+GET     /                               controllers.EntryPointController.index
+POST    /pictures                       controllers.PicturesController.post
+GET     /pictures/:pictureId            controllers.PicturesController.get(pictureId: Long)
+GET     /properties                     controllers.PropertiesController.getAll(last_created_time: Option[String])
+GET     /users/properties               controllers.UsersController.getProperties(last_created_time: Option[String])

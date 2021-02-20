@@ -1,0 +1,7 @@
+GET     /               controllers.TextboardController.get()
+POST    /               controllers.TextboardController.post()
+
+GET     /posts          controllers.PostsController.get()
+POST    /posts          controllers.PostsController.post()
+
+GET     /asets/*file    controllers.Assets.versioned(path="/public", file: Asset)

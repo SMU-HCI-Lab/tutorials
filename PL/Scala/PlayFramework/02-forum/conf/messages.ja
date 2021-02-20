@@ -1,0 +1,8 @@
+textboard.title = 掲示板
+textboard.dateTime = 日時
+textboard.dateFormat = yyyy年MM月dd日 HH:mm:ss
+textboard.message = メッセージ
+textboard.send = 送信
+
+error.minLength = メッセージを入力してください
+error.maxLength = メッセージが長すぎます
