@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <script src="https://d3js.org/d3.v4.js"></script>
+    </head>
+    <body>
+        <label for="number-input">Number</label>
+        <input type="number" id="number-input" value=13 />
+        <div id="canvas"></div>
+    </body>
+    <script>
+        var circle = d3.select("#canvas")
+            .append("svg")
+            .append("circle")
+            .attr("cx", 100)
+            .attr("cy", 70)
+            .attr("stroke", "white")
+            .style("fill", "#009ab5")
+            .attr("r", 13)
+
+        // A function that update the color circle
+        function changeSize() {
+            circle.attr("r", this.value)
+        }
+
+        // Add an event listener to the button created in the html part
+        d3.select("#number-input").on( "input", changeSize )
+    </script>
+</html>
