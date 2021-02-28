@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <script src="https://d3js.org/d3.v4.js"></script>
+    </head>
+    <body>
+        <div id="canvas"></div>
+    </body>
+    <script>
+        var svg = d3.select("#canvas")
+            .append("svg")
+                .attr("width", 460)
+                .attr("height", 460)
+                .style("background", "#eeeeee")
+                .call(d3.zoom().on("zoom", function () {
+                    svg.attr("transform", d3.event.transform)
+                }))
+            .append("g")
+        
+    svg.append("circle")
+        .attr("cx", 300)
+        .attr("cy", 300)
+        .attr("r", 40)
+        .style("fill", "#68b2a1")
+    </script>
+</html>
