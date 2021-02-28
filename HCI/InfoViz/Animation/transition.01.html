@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <style>
+        .bar {
+            fill: #009ab5;
+        }
+
+        .bar:hover {
+            fill: #006475;
+        }
+
+        .axis--x path {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="canvas"></div>
+</body>
+<script>
+    var svg = d3.select("#canvas")
+        .append("svg")
+        .attr("width", 640)
+        .attr("height", 480)
+
+    var margin = {
+        top: 20,
+        right: 20,
+        bottom: 30,
+        left: 40
+    };
+    var width = +svg.attr("width") - margin.left - margin.right;
+    var height = +svg.attr("height") - margin.top - margin.bottom;
+    var x = d3.scaleBand().rangeRound([0, width]).padding(0.4);
+    var y = d3.scaleLinear().rangeRound([height, 0]);
+
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var data = [
+        { x: 1, y: 4 },
+        { x: 2, y: 8 },
+        { x: 3, y: 15},
+        { x: 4, y: 16},
+        { x: 5, y: 23},
+        { x: 6, y: 42}
+    ];
+
+    x.domain(data.map(function (d) { return d.x; }))
+    y.domain([0, d3.max(data, function (d) { return d.y })]);
+
+    g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).ticks(12, "s"))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("text-anchor", "end")
+        .text("Frequency");
+
+    g.selectAll(".bar")
+        .data(data)
+        .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.x); })
+            .attr("y", height)
+        .transition()
+            .duration(1000)
+            .ease(d3.easeExp)
+            .attr("y", function(d) { return y(d.y); })
+            .attr("width", x.bandwidth())
+            .attr("height", function(d) { return height - y(d.y); });
+</script>
+</html>
