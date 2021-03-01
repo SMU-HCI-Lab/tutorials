@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <style>
+        circle {
+            fill: #009ab5;
+        }
+    </style>
+</head>
+<body>
+<div id="canvas"></div>
+</body>
+<script>
+    var svg = d3.select("#canvas")
+        .append("svg")
+        .attr("width", 640)
+        .attr("height", 480)
+
+    var margin = {
+        top: 20,
+        right: 20,
+        bottom: 30,
+        left: 40
+    };
+    var width = +svg.attr("width") - margin.left - margin.right;
+    var height = +svg.attr("height") - margin.top - margin.bottom;
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var data = [ 40, 80, 150, 160, 230, 420 ];
+
+
+    function update() {
+        var circle = svg.selectAll("circle").data(data);
+
+        circle.exit()
+            .transition()
+                .duration(1000)
+                .ease(d3.easeExp)
+                .attr("cx", 1000)
+                .remove()
+
+        circle.enter().append("circle")
+            .attr("r", 5)
+                .attr("cx", function (d) { return d; })
+                .attr("cy", -10)
+                .transition()
+                    .duration(1000)
+                    .ease(d3.easeExp)
+                    .attr("cy", 240);
+    }
+
+    d3.interval( function () {
+        var num = Math.round(Math.random() * width);
+        data.push(num);
+        console.log(data);
+
+        update();
+    }, 1000);
+
+
+</script>
+</html>
