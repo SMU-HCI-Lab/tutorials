@@ -14,7 +14,6 @@ For the Visualize Data Sent via SSE excercise, run the following commands to sen
 
 ```
 docker build -t starlette .
-
 docker run -p 8000:8000 -v $(pwd)/app:/app starlette
 ```
 
