@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+    </head>
+    <body>
+        <main>
+            <div id="chart"></div>
+        </main>
+    </body>
+    <script>
+        // https://www.d3-graph-gallery.com/graph/histogram_double.html
+
+        var margin = {top: 30, right: 30, bottom: 70, left: 60 };
+        var width = 460 - margin.left - margin.right;
+        var height = 400 - margin.top - margin.bottom;
+
+        var svg = d3.select("#chart")
+            .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+        d3.json('./data/iris.json').then(function (data) {
+
+            var x = d3.scaleLinear()
+                .domain([0, 5])
+                .range([0, width])
+
+            svg.append("g")
+                .attr("transform", "translate(0,"+ height + ")")
+                .call(d3.axisBottom(x))
+
+            var histogram = d3.histogram()
+                .value(function(d) { return d.sepalWidth })
+                .domain(x.domain())
+                .thresholds(x.ticks(40));
+
+            var bin1 = histogram(data.filter( function (d) { return d.species === "setosa"}))
+            var bin2 = histogram(data.filter( function (d) { return d.species === "versicolor"}))
+            var bin3 = histogram(data.filter( function (d) { return d.species === "virginica"}))
+
+            var y = d3.scaleLinear()
+                .range([height, 0])
+                .domain([0, d3.max(bin3, function (d) { return d.length; })])
+            svg.append("g")
+                .call(d3.axisLeft(y))
+            
+            svg.selectAll("rect-1")
+                .data(bin1)
+                .enter()
+                .append("rect")
+                    .attr("x", 1)
+                    .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+                    .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+                    .attr("height", function(d) { return height - y(d.length); })
+                    .style("fill", "#009ab5")
+                    .style("opacity", 0.6)
+            
+            svg.selectAll("rect-2")
+                .data(bin2)
+                .enter()
+                .append("rect")
+                    .attr("x", 1)
+                    .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+                    .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+                    .attr("height", function(d) { return height - y(d.length); })
+                    .style("fill", "#a81153")
+                    .style("opacity", 0.6)
+            
+            svg.selectAll("rect-3")
+                .data(bin3)
+                .enter()
+                .append("rect")
+                    .attr("x", 1)
+                    .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+                    .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+                    .attr("height", function(d) { return height - y(d.length); })
+                    .style("fill", "#545454")
+                    .style("opacity", 0.6)
+     
+        });
+
+    </script>
+</html>

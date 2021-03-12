@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+    </head>
+    <body>
+        <main>
+            <div id="chart"></div>
+        </main>
+    </body>
+    <script>
+        // https://www.d3-graph-gallery.com/graph/scatter_grouped.html
+
+        var margin = {top: 30, right: 30, bottom: 70, left: 60 };
+        var width = 460 - margin.left - margin.right;
+        var height = 400 - margin.top - margin.bottom;
+
+        var svg = d3.select("#chart")
+            .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+        d3.json('./data/iris.json').then(function (data) {
+
+            var x = d3.scaleLinear()
+                .domain([0, 10])
+                .range([0, width])
+
+            svg.append("g")
+                .attr("transform", "translate(0,"+ height + ")")
+                .call(d3.axisBottom(x))
+
+            var y = d3.scaleLinear()
+                .range([height, 0])
+                .domain([0, 10])
+            svg.append("g")
+                .call(d3.axisLeft(y))
+          
+            var color = d3.scaleOrdinal()
+                .domain(["setosa", "versicolor", "virginica" ])
+                .range([ "#009ab5", "#a81153", "#545454"])
+
+            svg.append('g')
+                .selectAll("dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", function (d) { return x(d.sepalLength); } )
+                .attr("cy", function (d) { return y(d.petalLength); } )
+                .attr("r", 5)
+                .attr('opacity', 0.6)
+                .attr('stroke', 'white')
+                .attr('stroke-width', 1)
+                .style("fill", function (d) { return color(d.species) } )
+     
+        });
+
+    </script>
+</html>

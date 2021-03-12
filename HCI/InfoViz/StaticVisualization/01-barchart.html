@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+    </head>
+    <body>
+        <main>
+            <div id="chart"></div>
+        </main>
+    </body>
+    <script>
+        // https://github.com/d3/d3-fetch
+        // https://www.d3-graph-gallery.com/graph/barplot_basic.html
+
+        var margin = {top: 30, right: 30, bottom: 70, left: 60 };
+        var width = 460 - margin.left - margin.right;
+        var height = 400 - margin.top - margin.bottom;
+
+        var svg = d3.select("#chart")
+            .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+        var data = [
+            { class: "setosa", sepal_length: 50.1 },
+            { class: "versicolor", sepal_length: 59.4 },
+            { class: "virginica", sepal_length: 65.9 }
+        ]
+
+        var x = d3.scaleBand()
+            .range([0, width])
+            .domain(data.map(function (d) { return d.class; }))
+            .padding(0.2);
+
+        svg.append("g")
+            .attr("transform", "translate(0, " + height + ")")
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("transform", "translate(0,0)rotate(0)")
+            // .style("text-anchor", "end");
+
+        var y = d3.scaleLinear()
+            .domain([0, 100])
+            .range([height, 0]);
+
+        svg.append("g")
+            .call(d3.axisLeft(y))
+
+        
+        svg.selectAll("mybar")
+            .data(data)
+            .enter()
+            .append("rect")
+                .attr("x", function (d) { return x(d.class)})
+                .attr("y", function (d) { return y(d.sepal_length)})
+                .attr("width", x.bandwidth())
+                .attr("height", function (d) { return height - y(d.sepal_length)})
+                .attr("fill", "#009ab5")
+    </script>
+</html>
