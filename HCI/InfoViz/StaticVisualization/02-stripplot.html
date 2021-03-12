@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+    </head>
+    <body>
+        <main>
+            <div id="chart"></div>
+        </main>
+    </body>
+    <script>
+        // https://github.com/d3/d3-fetch
+        // https://www.d3-graph-gallery.com/graph/barplot_basic.html
+
+        var margin = {top: 30, right: 30, bottom: 70, left: 60 };
+        var width = 460 - margin.left - margin.right;
+        var height = 400 - margin.top - margin.bottom;
+
+        var svg = d3.select("#chart")
+            .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+        d3.json('./data/iris.json').then(function (data) {
+
+            var y = d3.scaleBand()
+            .range([0, height])
+            .domain(["setosa", "versicolor", "virginica"])
+            .padding(0.2);
+
+            svg.append("g")
+                .attr("transform", "translate(0, 0)")
+                .call(d3.axisLeft(y))
+                .selectAll("text")
+
+
+            var x = d3.scaleLinear()
+                .domain([0, 8])
+                .range([0, width]);
+
+            svg.append("g")
+                .attr("transform", "translate(0, " + height + ")")
+                .call(d3.axisBottom(x))
+
+            
+            svg.selectAll("dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                    .attr("cy", function (d) { return y(d.species)})
+                    .attr("cx", function (d) { return x(d.sepalWidth)})
+                    .attr("r", 5)
+                    .attr("transform", "translate(0, 35)")
+                    .attr("fill", "#009ab5")
+        });
+
+    </script>
+</html>
