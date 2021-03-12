@@ -28,6 +28,7 @@ RUN conda install --quiet --yes \
     'ipywidgets=7.6.*' \
     'ipympl=0.6.*'\
     'matplotlib-base=3.3.*' \
+    'more-itertools=8.7.*' \
     'numba=0.52.*' \
     'numexpr=2.7.*' \
     'pandas=1.2.*' \
