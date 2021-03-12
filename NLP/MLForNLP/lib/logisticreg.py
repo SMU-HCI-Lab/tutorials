@@ -23,4 +23,16 @@ class LogisticRegression:
         while diff > self.tol and iter < self.max_iter:
             yhat = sigmoid(np.dot(Xtil, self.w_))
             r = np.clip(yhat * (1 - yhat), THRESHMIN, np.inf) # https://numpy.org/doc/stable/reference/generated/numpy.clip.html
-            
+            XR = Xtil.T * r
+            XRX = np.dot(Xtil.T * r, Xtil)
+            w_prev = self.w_
+            b = np.dot(XR, np.dot(Xtil, self.w_) - 1 / r * (yhat - y))
+            self.w_ = linalg.solve(XRX, b)
+            diff = abs(w_prev - self.w_).mean()
+            iter += 1
+    
+    def predict(self, X):
+        Xtil = np.c_[np.ones(X.shape[0]), X]
+        yhat = sigmoid(np.dot(Xtil, self.w_))
+        return np.where(yhat > .5, 1, 0)
+
