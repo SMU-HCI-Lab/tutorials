@@ -2,16 +2,19 @@
 import numpy as np
 from scipy import linalg
 
+
 THRESHMIN = 1e-10
+
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
+
 
 class LogisticRegression:
     def __init__(self, tol=0.001, max_iter=3, random_seed=0) -> None:
         self.tol = tol
         self.max_iter = max_iter
-        self.random_sate = np.random.RandomState(random_seed)
+        self.random_state = np.random.RandomState(random_seed)
         self.w_ = None
     
     def fit(self, X, y):
@@ -36,3 +39,7 @@ class LogisticRegression:
         yhat = sigmoid(np.dot(Xtil, self.w_))
         return np.where(yhat > .5, 1, 0)
 
+
+# https://en.wikipedia.org/wiki/Multinomial_logistic_regression
+class MultinomialLogisticRegression:
+    pass
