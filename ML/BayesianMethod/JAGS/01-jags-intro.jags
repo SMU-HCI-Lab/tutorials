@@ -1,0 +1,18 @@
+
+  model {
+  
+    for (i in 1:N) {
+      duration[i] ~ dgamma( shape, rate )
+    }
+  
+    # Parameterizing the above gamma distribution using
+    # mode and sd (standard deviation)
+  
+    shape <- 1 + mode * rate
+    rate <- (mode + sqrt( mode^2 + 4 *sd^2 ) ) / ( 2 * sd^2 )
+    
+    # Now these parameters are back to random variables.
+    mode ~ dunif(0, 100)
+    sd ~ dunif(0, 100)
+  }
+

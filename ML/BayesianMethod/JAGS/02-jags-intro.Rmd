@@ -1,0 +1,205 @@
+---
+title: "Introduction to JAGS #2"
+output: html_notebook
+---
+
+This tutorial extends the previous tutorial by handling a hierachical model. Just like the previous tutorial, we try to come up with a model that can predict workers' task completion time. Unlike the previous tutorial, however, we add another assumption that there are two groups of people. One group on average performs the task fast and one group performs the tasks slow.
+
+1. A task duration should be a positive continuos number.
+2. A task duration would follow a long-tail distribution with a certain mode and a spread.
+3. A task duration depends on the group that the person belongs to. There are two groups; one group performs the task fast and another group performs the task slow.
+4. A task duration does not depend on the difficulty of the task.
+
+Let's first import the libraries and write the above assumptions in JAGS.
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(R2jags)
+library(runjags)
+library(mcmcplots)
+
+data_generation_txt <- '
+model {
+  for (g in 1:G) {
+    for (n in 1:N) {
+      duration[g, n] ~ dgamma( shape[g], rate[g] )
+    }
+  }
+
+  # Parameterizing the above gamma distribution using
+  # mode and sd (standard deviation)
+  for (g in 1:G) {
+    shape[g] <- 1 + mode[g] * rate[g]
+    rate[g] <- (mode[g] + sqrt( mode[g]^2 + 4 *sd[g]^2 ) ) / ( 2 * sd[g]^2 )
+    sd[g] ~ dunif(0, 100)
+
+    # mode depends on a group.
+    mode[g] ~ dgamma( shape_g[g], rate_g[g] )
+  
+    # per_group shape and rate
+    shape_g[g] <- 1 + mode_g[g] * rate_g[g]
+    rate_g[g] <- (mode_g[g] + sqrt( mode_g[g]^2 + 4 * sd_g[g]^2 ) ) / ( 2 * sd_g[g]^2 )
+  
+    # mode_g[g] ~ dunif(0, 100)
+    # sd_g[g] ~ dunif(0, 100)
+  }
+}
+'
+```
+
+The following lines show that there are `G(=2)` groups, and in each group there are `N(=100)` people. 
+```{}
+  for (g in 1:G) {
+    for (n in 1:N) {
+      duration[g, n] ~ dgamma( shape[g], rate[g] )
+    }
+  }
+```
+
+The duration for each group for a gamma distribution and depend on `shape[g]` and `rate[g]`. We now want to set parameters for these parameters. Let's see the what follows the above code step-by step.
+```{}
+  for (g in 1:G) {
+    shape[g] <- 1 + mode[g] * rate[g]
+    rate[g] <- (mode[g] + sqrt( mode[g]^2 + 4 *sd[g]^2 ) ) / ( 2 * sd[g]^2 )
+    sd[g] ~ dunif(0, 100)
+```
+
+The code above shows that we are setting `shape[g]` and `rate[g]` for each group by iterating through `1:G`. Just like we did in the previous tutorial, we are transforming shape and rate into `mode` and standard deviation (`sd`). We set that `sd` follow a uniform distribution (`dunif(0,100)`) to describe our ignorance about the value of `sd`. Now, let's see how we set `mode[g]`.
+```{}
+    # mode depends on a group.
+    mode[g] ~ dgamma( shape_g[g], rate_g[g] )
+  
+    # per_group shape and rate
+    shape_g[g] <- 1 + mode_g[g] * rate_g[g]
+    rate_g[g] <- (mode_g[g] + sqrt( mode_g[g]^2 + 4 * sd_g[g]^2 ) ) / ( 2 * sd_g[g]^2 )
+  
+    # mode_g[g] ~ dunif(0, 100)
+    # sd_g[g] ~ dunif(0, 100)
+  }
+```
+
+In the above code, we are expressing that `mode[g]` should be a positive value by makeing it follow a gamma distribution with per-group shape (`shape_g`) and per-group rate (`rate_g[g]`). We use the same transformation as above and use `mode_g` and `sd_g` to parameterize the gamma distribution. The lines that are commented out show that `mode_g[g]` and `sd_g[g]` follow a uniform distribution. This is to show our ignorance about the values of these parameters. But because we provide hard-coded values for `mode_g[g]` and `sd_g[g]` in a process of creating synthethic data, we are commenting these out.
+
+Let's generate data by using parameters `mode_g[1]=10`, `sd_g[1]=1`, `mode_g[2]=50`, and `sd_g[2]=1`. We are using `G=2` and `N=1000` (i.e., there are two groups, and each group has 1,000 people in it).
+```{r}
+G <- 2
+N <- 1000
+mode_g <- c(10, 50)
+sd_g <- c(1, 1)
+data <- list(
+  G=G,
+  N=N,
+  mode_g=mode_g,
+  sd_g=sd_g
+)
+
+out <- run.jags(
+  data_generation_txt, 
+  data = data,
+  monitor = c("duration"),
+  sample = 1,
+  n.chains = 1)
+
+```
+
+Let's take a look at the summary statistics and the visualization of the generated data.
+
+```{r}
+Simulated <- coda::as.mcmc(out)
+dat <- as.matrix(Simulated)
+dim(dat) <- c(G, N)
+par(mfrow=c(2,1))
+hist(dat[1,], xlim=c(0,500), breaks=10)
+hist(dat[2,], xlim=c(0,500), breaks=10)
+
+```
+
+We have now obtained two sets of synthethic data. Let's use these data and our model, and check if we can correctly estimate the parameters from the data. 
+
+```{r}
+model <- 
+paste("
+model {
+  for (g in 1:G) {
+    for (n in 1:N) {
+      duration[g, n] ~ dgamma( shape[g], rate[g] )
+    }
+  }
+
+  # Parameterizing the above gamma distribution using
+  # mode and sd (standard deviation)
+  for (g in 1:G) {
+    shape[g] <- 1 + mode[g] * rate[g]
+    rate[g] <- (mode[g] + sqrt( mode[g]^2 + 4 *sd[g]^2 ) ) / ( 2 * sd[g]^2 )
+    sd[g] ~ dunif(0, 100)
+
+    # mode depends on a group.
+    mode[g] ~ dgamma( shape_g[g], rate_g[g] )
+  
+    # per_group shape and rate
+    shape_g[g] <- 1 + mode_g[g] * rate_g[g]
+    rate_g[g] <- (mode_g[g] + sqrt( mode_g[g]^2 + 4 * sd_g[g]^2 ) ) / ( 2 * sd_g[g]^2 )
+  
+    mode_g[g] ~ dunif(0, 100)
+    sd_g[g] ~ dunif(0, 100)
+  }
+}
+")
+
+model_filename <- "02-jags-intro.jags"
+writeLines(model, model_filename)
+
+# Combine the data from the first set and the second set of 
+# the data generated above
+jags.data <- list(
+  duration = dat,
+  G = G,
+  N = N
+)
+
+inits <- function(){
+  list()
+} 
+
+# parameters monitored
+parameters <- c("shape_g", "rate_g", "mode_g", "sd_g")
+
+# MCMC settings
+ni <- 10000
+nt <- 6
+nb <- 5000
+nc <- 2
+
+# call JAGS from R
+res <- jags(
+  jags.data, 
+  inits, 
+  parameters, 
+  model_filename, 
+  n.chains = nc, 
+  n.thin = nt, 
+  n.iter = ni, 
+  n.burnin = nb, 
+  working.directory = getwd())
+
+
+```
+
+Let's see the results.
+```{r}
+# summarize posteriors
+print(res, digits = 3)
+```
+
+Let's see trace plots. They seem to be converging though the estimated modes and standard deviations have large spread. 
+```{r}
+# trace plots
+traplot(res, c("mode_g", "sd_g"))
+```
+
+The following charts show the estimated parameters. The `mode`s' peaks are aroudn 10 and 50, which are what we should see (as those are what we set when we made synthethic data). However, the spread is quite big. And we do not have a very good estimates of `sd`s. This is because we used a quite conservative prior (i.e., `dunif(0,100)`).
+```{r}
+# posterior distributions
+denplot(res, c("mode_g", "sd_g"))
+```
+
+# Exercise
+XXX
