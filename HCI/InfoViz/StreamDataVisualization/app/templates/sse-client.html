@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <p>Index.html</p>
+  <script>
+      // https://www.html5rocks.com/en/tutorials/eventsource/basics/
+        var source = new EventSource('/stream');
+        source.onmessage = function(e) {
+        document.body.innerHTML += e.data + '<br>';
+        };
+    </script>
+</body>
+</html>
