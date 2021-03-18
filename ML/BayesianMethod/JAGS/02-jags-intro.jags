@@ -1,0 +1,27 @@
+
+model {
+  for (g in 1:G) {
+    for (n in 1:N) {
+      duration[g, n] ~ dgamma( shape[g], rate[g] )
+    }
+  }
+
+  # Parameterizing the above gamma distribution using
+  # mode and sd (standard deviation)
+  for (g in 1:G) {
+    shape[g] <- 1 + mode[g] * rate[g]
+    rate[g] <- (mode[g] + sqrt( mode[g]^2 + 4 *sd[g]^2 ) ) / ( 2 * sd[g]^2 )
+    sd[g] ~ dunif(0, 100)
+
+    # mode depends on a group.
+    mode[g] ~ dgamma( shape_g[g], rate_g[g] )
+  
+    # per_group shape and rate
+    shape_g[g] <- 1 + mode_g[g] * rate_g[g]
+    rate_g[g] <- (mode_g[g] + sqrt( mode_g[g]^2 + 4 * sd_g[g]^2 ) ) / ( 2 * sd_g[g]^2 )
+  
+    mode_g[g] ~ dunif(0, 100)
+    sd_g[g] ~ dunif(0, 100)
+  }
+}
+
