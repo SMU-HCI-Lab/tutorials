@@ -1,6 +1,6 @@
 from unittest import mock
-
 from meteorites import MeteoriteStats
+
 
 def test_average_mass():
     m = MeteoriteStats()
