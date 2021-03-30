@@ -7,5 +7,10 @@ class FileInfo:
         self.filename = os.path.basename(path)
 
     def get_info(self):
-        return self.filename, self.original_path, os.path.abspath(self.original_path)
+        return (
+            self.filename,
+            self.original_path,
+            os.path.abspath(self.original_path),
+            os.path.getsize(self.original_path)
+        )
 
