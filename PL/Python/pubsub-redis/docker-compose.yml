@@ -1,0 +1,9 @@
+# docker-compose.yml
+version: "3.9"
+services:
+  agent:
+    build: .
+    volumes:
+        - .:/code
+  redis:
+    image: "redis:alpine"
