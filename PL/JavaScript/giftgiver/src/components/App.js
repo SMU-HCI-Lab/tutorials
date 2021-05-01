@@ -2,20 +2,18 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import Gift from './Gift';
-import { max_number } from '../helper'
 
 class App extends Component {
-    // Add a constructor to add a state
-    // https://medium.com/@luke_smaki/javascript-es6-classes-8a34b0a6720a
     constructor () {
-        super(); // Calling the constructor of the super class (Component)
-
+        super();
         this.state = { gifts: [] };
     }
 
     addGift = () => {
         const { gifts } = this.state;
-        gifts.push({ id: max_number(this.state.gifts.map(gift => gift.id)) + 1 });
+        const ids = this.state.gifts.map(gift => gift.id);
+        const max_id =  ids.length > 0 ? Math.max(...ids) : 0;
+        gifts.push({ id: max_id + 1 });
         this.setState({ gifts });
     }
 
@@ -24,11 +22,10 @@ class App extends Component {
         this.setState({ gifts });
     }
 
-
     render () {
         return (
             <div>
-                <h2>Gift Giver</h2>
+                <h1>Gift Giver</h1>
                 <div className='gift-list'>
                     {
                         this.state.gifts.map(gift => 
@@ -40,7 +37,7 @@ class App extends Component {
                         )
                     }
                 </div>
-                <Button className='btn-add'  onClick={this.addGift}>Add Gift</Button>
+                <Button className='btn-add' onClick={this.addGift}>Add Gift</Button>
             </div>
         )
     }

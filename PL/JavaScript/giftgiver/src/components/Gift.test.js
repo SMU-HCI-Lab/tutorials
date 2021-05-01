@@ -1,8 +1,11 @@
 // src/components/Gift.test.js
-import React from 'react';
-import { shallow } from 'enzyme';
-import Gift from './Gift';
+import React from "react";
+import { shallow, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 import { isTSAnyKeyword, exportAllDeclaration } from '@babel/types';
+import Gift from './Gift';
+
+configure({adapter: new Adapter()});
 
 describe('Gift', () => {
     const mockRemove = jest.fn() // Jest's mock function
@@ -28,6 +31,7 @@ describe('Gift', () => {
         it('updates the person in `state', () => {
             expect(gift.state().person).toEqual(person);
         });
+
     });
 
     describe('when typing into the present input', () => {
@@ -38,8 +42,8 @@ describe('Gift', () => {
         });
 
         it('updates the present in `state', () => {
-            expect(gift.state().present).toEqual(present);          });
-
+            expect(gift.state().present).toEqual(present);  
+        });
     });
 
     describe('when clicking the `Remove Gift` button', () => {

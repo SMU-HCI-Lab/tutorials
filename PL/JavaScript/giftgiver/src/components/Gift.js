@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { Form, FormGroup, FormControl, FormLabel, Button } from 'react-bootstrap';
 
+
 class Gift extends Component {
     constructor() {
         super();
@@ -11,7 +12,7 @@ class Gift extends Component {
 
     render() {
         return (
-            <div className='gift'>
+            <div>
                 <Form>
                     <FormGroup>
                         <FormLabel>Person</FormLabel>
