@@ -8,7 +8,7 @@ LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
 # Fix DL4006
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-USER root
+USER $NB_UID
 
 # Install the Spacy English model
 COPY requirements.txt requirements.txt
