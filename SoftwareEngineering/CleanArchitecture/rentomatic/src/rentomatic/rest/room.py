@@ -8,7 +8,6 @@ from rentomatic.serializers import room_json_serializer as ser
 from rentomatic.request_objects import room_list_request_object as req
 from rentomatic.response_objects import response_objects as res
 
-
 blueprint = Blueprint('room', __name__)
 
 STATUS_CODES = {

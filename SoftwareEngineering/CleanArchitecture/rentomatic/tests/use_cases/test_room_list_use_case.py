@@ -2,7 +2,7 @@ import pytest
 import uuid
 from unittest import mock
 
-from response_objects import response_objects as res
+from rentomatic.response_objects import response_objects as res
 from rentomatic.domain import room as r
 from rentomatic.use_cases import room_list_use_case as uc
 from rentomatic.request_objects import room_list_request_object as req
