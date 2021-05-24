@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Mapping
 
 
 class InvalidRequestObject:
@@ -37,7 +37,7 @@ class RoomListRequestObject(ValidRequestObject):
         invalid_req = InvalidRequestObject()
 
         if 'filters' in adict:
-            if not isinstance(adict['filters'], collections.Mapping):
+            if not isinstance(adict['filters'], Mapping):
                 invalid_req.add_error('filters', 'Is not iterable')
                 return invalid_req
 
