@@ -23,6 +23,10 @@ class ResponseFailure:
             return "{}: {}".format(msg.__class__.__name__, "{}".format(msg))
         return msg
 
+    @property
+    def value(self):
+        return {'type': self.type, 'message': self.message}
+
     @classmethod
     def build_from_invalid_request_object(cls, invalid_request_object):
         message = "\n".join(["{}: {}".format(err['parameter'], err['message']) for err in invalid_request_object.errors])
