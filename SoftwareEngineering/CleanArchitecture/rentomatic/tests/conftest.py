@@ -21,6 +21,8 @@ def pytest_runtest_setup(item):
         pytest.skip("need --integration option ot run")
 
 
+# scope='session'
+# https://docs.pytest.org/en/6.2.x/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 @pytest.fixture(scope='session')
 def docker_setup(docker_ip):
     return {
@@ -41,7 +43,7 @@ def docker_tmpfile():
 
 
 @pytest.fixture(scope='session')
-def docker_comp0ose_file(docker_tmpfile, docker_setup):
+def docker_compose_file(docker_tmpfile, docker_setup):
     content = {
         'version': '3.1',
         'services': {
